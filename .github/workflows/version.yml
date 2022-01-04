@@ -1,0 +1,21 @@
+name: Version
+
+on:
+  workflow_dispatch:
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0                # fetch the whole repo history
+
+      - name: Git Version
+        id: git-version
+        uses: codacy/git-version@2.2.0
+        with:
+          release-branch: main
+          prefix: v
