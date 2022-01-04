@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          ref: main   # checkout the correct branch name
           fetch-depth: 0                # fetch the whole repo history        
 
       - name: Git Version
