@@ -21,13 +21,6 @@ jobs:
           release-branch: main
           prefix: v
 
-      - name: Output version
-        run: |
-          echo #####
-          echo Version ${{ steps.git-version.outputs.version }}
-          echo Prev Version ${{ steps.git-version.outputs.previous-version }}
-
-
       # ###########################
       # Generate OpenAPI definition
       # - name: Start MongoDB 🗃️ # We need Mongo to run
@@ -40,7 +33,9 @@ jobs:
 
       - name: Update package.json
         run: |
-          yarn version --no-git-tag-version --new-version ${{ steps.git-version.outputs.version }}
+          VERSION=${{ steps.git-version.outputs.version }}
+          CLEAN_VERSION="${VERSION/v/}"
+          yarn version --no-git-tag-version --new-version ${CLEAN_VERSION}
 
       # - name: Update OpenAPI
       #   id: update-openapi
@@ -75,5 +70,5 @@ jobs:
       - name: Comment URL on PR
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: 'Draft release `${{ steps.set-version-tag.outputs.tag }}` created. See: ${{steps.draft-release.outputs.url}}'
+          message: 'Draft release `${{ steps.git-version.outputs.version }}` created. See: ${{steps.draft-release.outputs.url}}'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
