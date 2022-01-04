@@ -23,8 +23,6 @@ jobs:
         with:
           release-branch: main
           prefix: v
-          minor-identifier: _MINOR_
-          major-identifier: _MAJOR_
 
       # ###########################
       # Generate OpenAPI definition
