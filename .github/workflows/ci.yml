@@ -1,0 +1,28 @@
+name: CI
+
+on: push
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+
+      - name: Install node modules 📦
+        run: yarn install
+
+      - name: Run ESLint
+        run: yarn lint
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+
+      - name: Install node modules 📦
+        run: yarn install
+
+      - name: Build 🛠
+        run: yarn build

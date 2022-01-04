@@ -1,0 +1,31 @@
+{
+  "name": "version-experiment",
+  "version": "1.0.0",
+  "description": "Version test",
+  "main": "index.js",
+  "repository": "git@github.com:codewithpassion/version-experiment.git",
+  "author": "Dominik Fretz <dominik.fretz@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "typescript": "^4.5.4"
+  }
+}
