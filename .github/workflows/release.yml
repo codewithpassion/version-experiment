@@ -5,6 +5,7 @@ on:
     types: [closed]
     branches:
       - main
+  workflow-dispatch:
 
 jobs:
   release:
@@ -13,10 +14,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Git Version
+        id: git-version
+        uses: codacy/git-version@2.2.0
+        with:
+          release-branch: main
+
       - name: set version tag
         id: set-version-tag
         run: |
           echo "::set-output name=tag::v$(date +'%Y%m%d.T%H%M')"
+
+      - name: Output version
+        run: |
+          echo #####
+          echo Version ${{ steps.git-version.outputs.version }}
+          echo Prev Version ${{ steps.git-version.outputs.previous-version }}
+
 
       # ###########################
       # Generate OpenAPI definition
