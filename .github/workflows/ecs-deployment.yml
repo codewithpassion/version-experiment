@@ -1,0 +1,102 @@
+# We can't reference reusable workflows in private repositories
+# but this file is reused in other repos. This file is a duplicate of:
+# https://github.com/milk-run/common/blob/main/.github/workflows/ecs-deployment.yml
+
+on:
+  workflow_call:
+    inputs:
+      # AWS_REGION:
+      #   description: 'The AWS region to deploy to'
+      #   required: false
+      #   type: string
+      #   default: ap-southeast-2
+      # ECR_REPOSITORY:
+      #   description: 'Amazon ECR repository name'
+      #   required: true
+      #   type: string
+      # ECS_SERVICE:
+      #   description: 'Amazon ECS service name'
+      #   required: true
+      #   type: string
+      # ECS_CLUSTER:
+      #   description: 'Amazon ECS cluster name'
+      #   required: true
+      #   type: string
+      # ECS_TASK_DEFINITION_NAME:
+      #   description: 'Amazon ECS task definition file name'
+      #   required: true
+      #   type: string
+      # CONTAINER_NAME:
+      #   description: 'The name of containerDefinitions section of your task definition'
+      #   required: true
+      #   type: string
+      NODE_ENV:
+        description: 'The node environment to deploy to'
+        required: true
+        type: string
+      # ADDITIONAL_BUILD_ARG:
+      #   description: 'Additional build arguments to pass to the build command'
+      #   required: false
+      #   type: string
+      #   default: ''
+      TARGET_URL:
+        description: 'The URL to deploy to'
+        required: true
+        type: string
+    # secrets:
+    #   AWS_ACCESS_KEY_ID:
+    #     required: true
+    #   AWS_SECRET_ACCESS_KEY:
+    #     required: true
+    #   SLACK_WEBHOOK_TECH_INFO:
+    #     required: true
+
+jobs:
+  build-and-deploy:
+    name: 'Build and Deploy'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Lint to succeed
+        uses: lewagon/wait-on-check-action@v1.1.1
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'lint'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
+      - name: Wait for Build to succeed
+        uses: lewagon/wait-on-check-action@v1.1.1
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'build'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
+      - uses: chrnorm/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: '${{ github.token }}'
+          target_url: ${{ inputs.TARGET_URL }}
+          environment: ${{ inputs.NODE_ENV }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: '${{ github.token }}'
+          target_url: ${{ inputs.TARGET_URL }}
+          state: 'success'
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: '${{ github.token }}'
+          target_url: ${{ inputs.TARGET_URL }}
+          state: 'failure'
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
